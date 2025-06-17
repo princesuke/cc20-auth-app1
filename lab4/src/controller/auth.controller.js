@@ -25,7 +25,7 @@ export async function login(req, res) {
 export async function me(req, res) {
   const userId = req.userId;
   const user = await getMe(userId);
-  res.json({ id: user.id, email: user.email });
+  res.json({ id: user.id, email: user.email, role: user.role });
 }
 
 export async function forgotPassword(req, res) {
@@ -33,10 +33,15 @@ export async function forgotPassword(req, res) {
   const user = await findUserByEmail(email);
   if (!user) return res.status(404).json({ message: "User not found" });
 
+  const frontUrl = "http://localhost:5173/reset-password";
+
   const token = signResetToken(user.id);
-  const link = `${req.protocol}://${req.get(
-    "host"
-  )}/api/auth/reset-password/${token}`;
+  // const link = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/api/auth/reset-password/${token}`;
+
+  const link = `${frontUrl}/${token}`;
+
   res.json({ message: "Reset link generated", link });
 }
 
